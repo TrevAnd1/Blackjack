@@ -1,2 +1,2 @@
 # Blackjack
-My Blackjack replica in Python
+My name is Trevor Anderson and I am a freshman at the University of Connecticut. I am pursuing a degree in Computer Science and I am uploading my passion projects on GitHub. This program is a replica of the card game "Blackjack" or "21". I created this program in the Python language, and I will be pushing commits to the code whenever I get the chance in between my school work and studying. Please feel free to leave feedback on the project, as I am still considering myself a beginner to the language. Over time, once I familiarize myself with the language syntax and concepts more I will refer back to this to make it more understandable and readable for all. Hope you enjoy!
