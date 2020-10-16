@@ -18,11 +18,11 @@ playing = True
 
 while playing:
 
-    for card in your_cards:
-        your_cards_sum += your_cards[card]
+    for i in your_cards:
+        your_cards_sum += your_cards[i]
 
-    for card in dealer_cards:
-        dealer_cards_sum += dealer_cards[card]
+    for j in dealer_cards:
+        dealer_cards_sum += dealer_cards[j]
 
     def add_new_card():
         your_cards.append(random.choice(card_list))
@@ -30,5 +30,45 @@ while playing:
         return (f'Your cards are {your_cards} with a sum of {your_cards_sum}!')
 
     def check_for_ace():
-        pass
+        for i in range(your_cards):
+          if i == a:
+            print(f'Your cards are {your_cards}')
+            one_or_eleven = input('You have an ace! Do you want it to count as a 1 or 11? (one/eleven) ').lower()
+            if one_or_eleven == 'one':
+              your_cards[i] = 1
+            else:
+              your_cards[i] = 11
+            return (f'Your new cards are {your_cards} with a sum of {your_cards_sum}')
+          return (f'Your cards are {your_cards} with a sum of {your_cards_sum}')
+
+    def add_dealer_card():
+      dealer_cards.append(random.choice(card_list))
+      card_list.remove(dealer_cards[-1])
+      return (f'The dealer\'cards are {dealer_cards}')
+
+    def check_for_ace_dealer():
+      for i in range(dealer_cards):
+        if (dealer_cards[i] == a):
+          if dealer_cards.index(i) == 0:
+            if dealer_cards[i + 1] >= 6:
+              dealer_cards[i] = 11
+            else:
+              dealer_cards[i] = 1
+          elif dealer_cards.index(i) == 1:
+            if dealer_cards[i - 1] >= 6:
+              dealer_cards[i] = 11
+            else:
+              dealer_cards[i] = 1
+      return (f'The dealer\'s cards are {dealer_cards} with a sum of {dealer_cards_sum}')
+
+
+    def check_if_bust():
+      hit_or_stand= True
+      if your_cards_sum > 21:
+        print('You busted!')
+
+    add_new_card()
+
+    check_for_ace()
+
 print('Thanks for playing!')
