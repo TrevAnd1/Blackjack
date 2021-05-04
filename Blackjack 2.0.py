@@ -27,7 +27,7 @@ def add_new_card():
     if your_cards[-1] != 'A':
         your_cards_sum += your_cards[-1]
 
-def handle_ace():
+def handle_player_ace():
     global your_cards_sum
     if 'A' in your_cards:
         ace_spot = your_cards.index('A')
@@ -41,25 +41,48 @@ def handle_ace():
             your_cards_sum += 11
             print(f'Your cards are {your_cards} with a sum of {your_cards_sum}')
 
-# def add_dealer_card():
-#     dealer_cards.append(random.choice(card_list))
-#     card_list.remove(dealer_cards[-1])
-#     return (f'The dealer\'s cards are {dealer_cards}')
+def add_dealer_card():
+    global dealer_cards_sum
+    dealer_cards.append(random.choice(card_list))
+    card_list.remove(dealer_cards[-1])
+    if dealer_cards[-1] != 'A':
+        dealer_cards_sum += dealer_cards[-1]
 
-# def check_for_ace_dealer():
-#     for i in range(len(dealer_cards)):
-#       if (dealer_cards[i] == 'A'):
-#         if dealer_cards.index(i) == 0:
-#           if dealer_cards[i + 1] >= 6:
-#             dealer_cards[i] = 11
-#           else:
-#             dealer_cards[i] = 1
-#         elif dealer_cards.index(i) == 1:
-#           if dealer_cards[i - 1] >= 6:
-#             dealer_cards[i] = 11
-#           else:
-#             dealer_cards[i] = 1
-#     return (f'The dealer\'s cards are {dealer_cards} with a sum of {dealer_cards_sum}')
+def handle_dealer_ace():
+    global dealer_cards_sum
+    if 'A' in dealer_cards:
+        ace_spot = dealer_cards.index('A')
+        if dealer_cards_sum <= 10:
+            dealer_cards[ace_spot] = 11
+            dealer_cards_sum += 11
+            print(f"The dealer's cards are {dealer_cards} with a sum of {dealer_cards_sum}")
+        else:
+            dealer_cards[ace_spot] = 1
+            dealer_cards_sum += 1
+            print(f"The dealer's cards are {dealer_cards} with a sum of {dealer_cards_sum}")
+
+def dealer_hit():
+    global dealer_cards_sum
+    if dealer_cards_sum < 14:
+        print("The dealer will hit.")
+        add_dealer_card()
+        print(f"The dealer's new cards are {dealer_cards} with a sum of {dealer_cards_sum}")
+
+def player_blackjack():
+    if your_cards_sum == 21:
+        print("Blackjack! You win!")
+        game_over = True
+
+def dealer_stand():
+    global dealer_cards_sum
+    if dealer_cards_sum >= 14:
+        print(f"The dealer will stand with cards: {dealer_cards} and a sum: {dealer_cards_sum} ")
+
+
+def dealer_blackjack():
+    if dealer_cards_sum == 21:
+        print("The dealer got a Blackjack, you lose!")
+        game_over = True
 
 user_input = input("Press any key to draw two cards ('q' to quit): ")
 
@@ -67,20 +90,12 @@ while user_input != 'q' and not game_over:
 
     add_new_card()
     add_new_card()
-
-    # for i in range(len(your_cards)):
-    #     if your_cards[i] != 'A':
-    #         your_cards_sum += your_cards[i]
-    #     else:
-    #         i += 1
     
     print(f'Your cards are {your_cards} with a sum of {your_cards_sum}')
 
-    handle_ace()
+    handle_player_ace()
 
-    if your_cards_sum == 21:
-        print("Blackjack! You win!")
-        game_over = True
+    player_blackjack()
     
     hit_or_stand = input(f'You currently have {your_cards_sum} points, do you want to hit or stand? (hit/stand): ').lower()
 
@@ -90,7 +105,7 @@ while user_input != 'q' and not game_over:
 
         print(f"Your new cards are {your_cards} with a sum of {your_cards_sum}")
 
-        handle_ace()
+        handle_player_ace()
 
         if your_cards_sum > 21:
             print(f"You busted with {your_cards_sum} points!")
@@ -106,5 +121,18 @@ while user_input != 'q' and not game_over:
     if hit_or_stand == 'stand':
         print(f"You chose to stand with {your_cards_sum} points.")
         break
+
+while not game_over:
+
+    add_dealer_card()
+    add_dealer_card()
+
+    print(f"The dealer will now reveal his cards, {dealer_cards}, with a sum of {dealer_cards_sum}")
+
+    handle_dealer_ace()
+
+    dealer_blackjack()
+    
+    
 
 print('Thanks for playing!')
