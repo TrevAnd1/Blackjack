@@ -19,6 +19,10 @@ dealer_cards = []
 your_cards_sum = 0
 dealer_cards_sum = 0
 game_over = False
+player_win = False
+dealer_win = False
+player_blackjack = False
+dealer_blackjack = False
 
 def add_new_card():
     global your_cards_sum
@@ -48,54 +52,42 @@ def add_dealer_card():
     if dealer_cards[-1] != 'A':
         dealer_cards_sum += dealer_cards[-1]
 
-def handle_dealer_ace():
-    global dealer_cards_sum
-    if 'A' in dealer_cards:
-        ace_spot = dealer_cards.index('A')
-        if dealer_cards_sum <= 10:
-            dealer_cards[ace_spot] = 11
-            dealer_cards_sum += 11
-            print(f"The dealer's cards are {dealer_cards} with a sum of {dealer_cards_sum}")
-        else:
-            dealer_cards[ace_spot] = 1
-            dealer_cards_sum += 1
-            print(f"The dealer's cards are {dealer_cards} with a sum of {dealer_cards_sum}")
-
 def dealer_hit():
     global dealer_cards_sum
-    if dealer_cards_sum < 14:
-        print("The dealer will hit.")
-        add_dealer_card()
-        print(f"The dealer's new cards are {dealer_cards} with a sum of {dealer_cards_sum}")
+    add_dealer_card()
+    print(f"The dealer hit, the new deck is {dealer_cards} with a sum of {dealer_cards_sum}")
 
 def player_blackjack():
     if your_cards_sum == 21:
-        print("Blackjack! You win!")
         game_over = True
-
-def dealer_stand():
-    global dealer_cards_sum
-    if dealer_cards_sum >= 14:
-        print(f"The dealer will stand with cards: {dealer_cards} and a sum: {dealer_cards_sum} ")
+        player_blackjack = True
+        return True
 
 
 def dealer_blackjack():
     if dealer_cards_sum == 21:
-        print("The dealer got a Blackjack, you lose!")
         game_over = True
+        dealer_blackjack = True
+        return True
+
+add_dealer_card()
+add_new_card()
+add_dealer_card()
+add_new_card() #TODO: if dealer's first card is a 10 or an ace, do an initial check to see if they got a blackjack, if not just continue
 
 user_input = input("Press any key to draw two cards ('q' to quit): ")
 
-while user_input != 'q' and not game_over:
+while user_input != 'q' and not game_over: # first main loop to control the player hitting or standing
 
-    add_new_card()
-    add_new_card()
-    
     print(f'Your cards are {your_cards} with a sum of {your_cards_sum}')
 
     handle_player_ace()
 
-    player_blackjack()
+    if player_blackjack():
+        game_over = True
+        player_win = True
+        player_blackjack = True
+        break
     
     hit_or_stand = input(f'You currently have {your_cards_sum} points, do you want to hit or stand? (hit/stand): ').lower()
 
@@ -110,10 +102,12 @@ while user_input != 'q' and not game_over:
         if your_cards_sum > 21:
             print(f"You busted with {your_cards_sum} points!")
             game_over = True
+            dealer_win = True
             break
-        if your_cards_sum == 21:
-            print("Blackjack! You win!")
+        if player_blackjack():
             game_over = True
+            player_win = True
+            player_blackjack = True
             break
 
         hit_or_stand = input(f'You currently have {your_cards_sum} points, do you want to hit or stand? (hit/stand): ').lower()
@@ -122,17 +116,36 @@ while user_input != 'q' and not game_over:
         print(f"You chose to stand with {your_cards_sum} points.")
         break
 
-while not game_over:
+if not game_over:
 
-    add_dealer_card()
-    add_dealer_card()
+    while (not game_over) or (dealer_cards_sum < 17): # second main loop to control the dealer's actions
 
-    print(f"The dealer will now reveal his cards, {dealer_cards}, with a sum of {dealer_cards_sum}")
+        print(f"Dealer's cards are {dealer_cards} with a sum of {dealer_cards_sum}")
 
-    handle_dealer_ace()
+        add_dealer_card()
 
-    dealer_blackjack()
-    
+        if dealer_cards[-1] == 'A':
+            dealer_cards[-1] = 11
+            if dealer_cards_sum > 21:
+                dealer_cards[-1] = 1
+            
+        if dealer_cards_sum == 21:
+            game_over = True
+            dealer_win = True
+            dealer_blackjack = True
+            break
+
+    if player_blackjack:
+        print("Blackjack! You win!")
+    elif dealer_blackjack:
+        print("The dealer got a blackjack. You lose!")
+    elif player_win:
+        print(f"You beat the dealer by {your_cards_sum - dealer_cards_sum} points!")
+    elif dealer_win:
+        print(f"You lost to the dealer by {dealer_cards_sum - your_cards_sum} points!")
+    else:
+        print("You and the dealer tied! No one wins, but no one loses!")
+
     
 
 print('Thanks for playing!')
